@@ -66,6 +66,12 @@ def coco2odvg(args):
             }
         )
     print("  == dump meta ...")
+    if args.generic:  # 就只有一类{"0": "generic"}
+        for meta in metas:
+            meta["detection"]["instances"] = [
+                {"bbox": inst["bbox"], "label": "0", "category": "generic"}
+                for inst in meta["detection"]["instances"]
+            ]
     with jsonlines.open(args.output, mode="w") as writer:
         writer.write_all(metas)
     print("  == done.")
@@ -75,6 +81,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser("coco to odvg format.", add_help=True)
     parser.add_argument("--input", '-i', required=True, type=str, help="input list name")
     parser.add_argument("--output", '-o', required=True, type=str, help="output list name")
+    parser.add_argument("--generic", '-g', default=False, action="store_true", help="use generic label map")
     args = parser.parse_args()
 
     coco2odvg(args)

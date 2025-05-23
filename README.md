@@ -1,3 +1,53 @@
+## yutian
+### setup
+```bash
+conda env create -f dipex.yaml
+conda activate dipex
+```
+### trianing on COCO2017
+- DOWNLOAD [Pre-trained Model](https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth), put it to  `Open-GroundingDino/`
+- DOWNLOAD [COCO2017 dataset](https://cocodataset.org/#download), put it to `DATAROOT`
+- CONVERT `instance.json` to `generic.jsonl`
+  ```
+  python tools/coco2odvg.py --input DATAROOT/coco/annotations/instances_train2017.json --output DATAROOT/coco/annotations/generic_train2017.jsonl --generic
+  ```
+- CHANGE `config/datasets_caod.json`
+  ```
+  {
+    "train": [
+      {
+        "root": "DATAROOT/coco/train2017",
+        "anno": "DATAROOT/coco/annotations/generic_train2017.jsonl",
+        "label_map": "config/coco2017_ca_label_map.json",
+        "dataset_mode": "odvg"
+      }
+    ],
+    "val": [
+      {
+        "root": "/DATAROOT/coco/val2017",
+        "anno": "DATAROOT/coco/annotations/instances_val2017.json",
+        "label_map": null,
+        "dataset_mode": "coco"
+      }
+    ]
+  }
+  ```
+- CHANGE `train_dipex.sh`
+  ```
+  python -u main.py \
+          --amp \
+          --output_dir logs_dipex \
+          -c config/cfg_coco.py \
+          --datasets config/datasets_caod.json \
+          --pretrain_model_path PATH/TO/groundingdino_swint_ogc.pth \
+          --options text_encoder_type=bert-base-uncased \
+  ```
+- train
+  ```
+  bash train_dipex.sh
+  ```
+
+
 # DiPEx
 
 This repository provides the official PyTorch implementation of our paper, [**DiPEx: Dispersing Prompt Expansion for Class-Agnostic Object Detection**](https://openreview.net/pdf?id=NDs9Ejz4Pe), presented at [**NeurIPS 2024**](https://nips.cc/virtual/2024/poster/95458).
