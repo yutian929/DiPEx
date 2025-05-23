@@ -1,9 +1,23 @@
 ## yutian
 ### setup
-```bash
-conda env create -f dipex.yaml
-conda activate dipex
-```
+- from `env.yaml`
+  ```bash
+  conda env create -f dipex.yaml
+  conda activate dipex
+  ```
+- manually
+  ```bash
+  conda create -n dipex python=3.10
+  conda activate dipex
+  pip install torch==2.4.0+cu121 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+  cd Open-GroundingDino/
+  pip install -r requirements.txt 
+  cd models/GroundingDINO/ops
+  python setup.py build install
+  python test.py
+  cd ../../..
+
+  ```
 ### trianing on COCO2017
 - DOWNLOAD [Pre-trained Model](https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth), put it to  `Open-GroundingDino/`
 - DOWNLOAD [COCO2017 dataset](https://cocodataset.org/#download), put it to `DATAROOT`
@@ -44,6 +58,7 @@ conda activate dipex
   ```
 - train
   ```
+  export HF_ENDPOINT="https://hf-mirror.com"
   bash train_dipex.sh
   ```
 
